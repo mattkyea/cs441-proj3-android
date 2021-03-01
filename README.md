@@ -6,3 +6,9 @@ CS441 Assignment 3 - Custom drawing
 Create a new class/view that can be placed on the screen, and use low-level primitives to draw on it.  Lines.  Text.  Images, Your choice; the goal is to get to a spot where you can comfortably put things on screen, and have some control over them.
 
 Also have some support for animation and interaction -- drag things around, drag a line to draw, use a slider or a button to change things on the screen.
+
+# sources
+
+### libGDX
+#### drawing shapes
+https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/graphics/glutils/ShapeRenderer.html
