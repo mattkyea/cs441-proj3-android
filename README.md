@@ -11,4 +11,10 @@ Also have some support for animation and interaction -- drag things around, drag
 
 ### libGDX
 #### drawing shapes
-https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/graphics/glutils/ShapeRenderer.html
+#### https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/graphics/glutils/ShapeRenderer.html
+
+### input
+#### https://github.com/libgdx/libgdx/wiki/Gesture-detection
+-basic explanation of gestures
+#### https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/input/GestureDetector.html
+-javadocs for more in-depth explanation (looking at the source code helped too)
