@@ -7,6 +7,14 @@ Create a new class/view that can be placed on the screen, and use low-level prim
 
 Also have some support for animation and interaction -- drag things around, drag a line to draw, use a slider or a button to change things on the screen.
 
+# to do
+
+### add support for different shapes and colors
+### allow user to pick shape and color
+### fix bug where x, y isn't where I click
+### clean and remove the gesture implementation classes
+### possibly use game idea (how many circles can you draw before they overlap) 
+
 # sources
 
 ### libGDX

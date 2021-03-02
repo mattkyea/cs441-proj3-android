@@ -16,18 +16,33 @@ public class Assign3 extends ApplicationAdapter {
 	Texture img;
 	ShapeRenderer shapeRenderer;
 	ShapeRenderer s2;
-	ArrayList<ShapeRenderer> shapeRenderers = new ArrayList<>();
+	ArrayList<CustomShape> shapes = new ArrayList<>();
 	float radius;
 	float xPos;
 	float yPos;
 	boolean expandShape = false;
 
-	
+	public class CustomShape{
+		public ShapeRenderer shapeRenderer;
+		public float x, y, l, w, r;
+		boolean expanding = false;
+
+		CustomShape(float x, float y, float l, float w, float r, boolean expanding){
+			this.x = x;
+			this.y = y;
+			this.l = l;
+			this.w = w;
+			this.r = r;
+			this.expanding = expanding;
+			shapeRenderer = new ShapeRenderer();
+		}
+	}
+
 	@Override
 	public void create () {
 		radius = 0;
 		shapeRenderer = new ShapeRenderer();
-		shapeRenderers.add(shapeRenderer);
+		//shapeRenderers.add(shapeRenderer);
 		//GestureDetector.GestureListener gestureListener = this;
 		Gdx.input.setInputProcessor(new GestureDetector(new GestureDetector.GestureListener()
 			{
@@ -82,19 +97,22 @@ public class Assign3 extends ApplicationAdapter {
 			@Override
 			public boolean touchDown(float x, float y, int pointer, int button) {
 				System.out.println("down");
+				shapes.add(new CustomShape(x, y, 0,0,0, true));
 				expandShape = true;
 				xPos = x;
 				yPos = y;
+				//shapeRenderer = new ShapeRenderer();
 				return false;
 			}
 
 			@Override
 			public boolean touchUp(float x, float y, int pointer, int button) {
 				System.out.println("up");
-				expandShape = false;
-				radius = 0;
+				CustomShape c = shapes.get(shapes.size()-1);
+				c.expanding = false;
+				//radius = 0;
 				//shapeRenderer = new ShapeRenderer();
-
+				//shapeRenderers.add(new ShapeRenderer());
 				return false;
 			}
 
@@ -120,14 +138,14 @@ public class Assign3 extends ApplicationAdapter {
 
 		//this doesn't quite work, I'll probably try a custom class
 		//each with X, Y, Len/Wid/Radius, shape, shapeRenderer
-		for(ShapeRenderer s: shapeRenderers){
-			s.begin(ShapeRenderer.ShapeType.Filled);
-			s.setColor(1, 1, 0, 1);
-			s.circle(xPos, yPos, radius, 500);
-			if(expandShape == true){
-				radius++;
+		for(CustomShape s: shapes){
+			s.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+			s.shapeRenderer.setColor(1, 1, 0, 1);
+			s.shapeRenderer.circle(s.x, s.y, s.r, 500);
+			if(s.expanding == true){
+				s.r++;
 			}
-			s.end();
+			s.shapeRenderer.end();
 		}
 
 	}
