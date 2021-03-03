@@ -11,8 +11,6 @@ Also have some support for animation and interaction -- drag things around, drag
 
 ### add support for different shapes and colors
 ### allow user to pick shape and color
-### fix bug where x, y isn't where I click
-### clean and remove the gesture implementation classes
 ### possibly use game idea (how many circles can you draw before they overlap) 
 
 # sources
@@ -26,3 +24,10 @@ Also have some support for animation and interaction -- drag things around, drag
 -basic explanation of gestures
 #### https://libgdx.badlogicgames.com/ci/nightlies/docs/api/com/badlogic/gdx/input/GestureDetector.html
 -javadocs for more in-depth explanation (looking at the source code helped too)
+
+### buttons
+#### https://libgdx.info/buttons-scene2d/
+-basic how to, although the skins section didn't work for me
+#### https://github.com/czyzby/gdx-skins
+-different customization/skins for buttons
+
