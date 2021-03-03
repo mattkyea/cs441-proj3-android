@@ -3,15 +3,10 @@ package com.assign3.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -19,77 +14,227 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.ArrayList;
 
 public class Assign3 extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	ShapeRenderer shapeRenderer;
-	ShapeRenderer s2;
 	private Stage stage;
 	ArrayList<CustomShape> shapes = new ArrayList<>();
-	float radius;
-	float xPos;
-	float yPos;
-	BitmapFont font;
-	TextButton button;
-	TextButton.TextButtonStyle textButtonStyle;
-	TextureAtlas buttonAtlas;
+	boolean buttonPressed = false;
 	boolean expandShape = false;
+	String currentShape = "Circle";
 
-	public class CustomShape{
+
+	public abstract class CustomShape{
 		public ShapeRenderer shapeRenderer;
-		public float x, y, l, w, r;
+		public float x, y;
 		boolean expanding = false;
 
-		CustomShape(float x, float y, float l, float w, float r, boolean expanding){
+		CustomShape(float x, float y, boolean expanding){
 			this.x = x;
 			this.y = y;
-			this.l = l;
-			this.w = w;
-			this.r = r;
 			this.expanding = expanding;
 			shapeRenderer = new ShapeRenderer();
 		}
+
+		public abstract void draw();
+		public abstract void  expand();
+
+	}
+
+	public class Circle extends CustomShape{
+
+		public float r;
+
+		Circle(float x, float y,  float r, boolean expanding){
+			super(x, y, expanding);
+			this.r = r;
+		}
+
+		@Override
+		public void draw() {
+			shapeRenderer.circle(x, y, r);
+		}
+
+		@Override
+		public void expand() {
+			if(expanding == true) r++;
+		}
+
+	}
+
+	public class Square extends CustomShape{
+
+		public float w, h;
+
+		Square(float x, float y,  float w, float h, boolean expanding){
+			super(x, y, expanding);
+			this.w = w;
+			this.h = h;
+		}
+
+		@Override
+		public void draw() {
+			shapeRenderer.rect(x, y, w, h);
+		}
+
+		@Override
+		public void expand() {
+			if(expanding == true){ w++; h++;}
+		}
+
+	}
+
+	public class Cone extends CustomShape{
+
+		public float z, r, h;
+		public boolean flipFlop = false;
+
+		Cone(float x, float y,  float z, float r, float h, boolean expanding){
+			super(x, y, expanding);
+			this.r = r;
+			this.z = z;
+			this.h = h;
+		}
+
+		@Override
+		public void draw() {
+			//shapeRenderer.triangle(x, y, z, r, h, 5);
+			shapeRenderer.ellipse(x, y, r, h);
+		}
+
+		@Override
+		public void expand() {
+			if(expanding == true){
+				h++;
+				if(flipFlop == false){
+					r++;
+					flipFlop = true;
+				}else{
+					flipFlop = false;
+				}
+			}
+		}
+
 	}
 
 	@Override
 	public void create () {
-		radius = 0;
-		shapeRenderer = new ShapeRenderer();
-		//shapeRenderers.add(shapeRenderer);
-		//GestureDetector.GestureListener gestureListener = this;
 		stage = new Stage(new ScreenViewport());
 		Gdx.input.setInputProcessor(stage);
-		font = new BitmapFont();
-		//System.out.println(Gdx.files.internal(""));
+
+		//set up buttons
 		Skin mySkin = new Skin(Gdx.files.internal("skin/flat-earth-ui.json"));
-		Button button2 = new TextButton("Text Button",mySkin);
-		button2.setSize(200,200);
-		button2.setPosition(500,500);
-		button2.addListener(new InputListener(){
+
+
+		//BUG - bottom of buttons don't work
+		TextButton circleButton = new TextButton("Circle", mySkin);
+		circleButton.setTransform(true);
+		circleButton.setSize(200,200);
+		circleButton.setRotation(90);
+		circleButton.setPosition(2000,850);
+		circleButton.getLabel().setFontScale(2f);
+
+		TextButton squareButton = new TextButton("Square", mySkin);
+		squareButton.setTransform(true);
+		squareButton.setSize(200,200);
+		squareButton.setRotation(90);
+		squareButton.setPosition(2000,450);
+		squareButton.getLabel().setFontScale(2f);
+
+		TextButton coneButton = new TextButton("Triangle", mySkin);
+		coneButton.setTransform(true);
+		coneButton.setSize(200,200);
+		coneButton.setRotation(90);
+		coneButton.setPosition(2000,50);
+		coneButton.getLabel().setFontScale(2f);
+
+
+
+
+
+		circleButton.addListener(new InputListener(){
 			@Override
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-				//outputLabel.setText("Press a Button");
 				System.out.println("button up");
+				buttonPressed = false;
 			}
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				//outputLabel.setText("Pressed Text Button");
 				System.out.println("button down");
+				buttonPressed = true;
+				currentShape = "Circle";
 				return true;
 			}
 		});
-		stage.addActor(button2);
-		stage.addListener(new InputListener(){
+
+
+		squareButton.addListener(new InputListener(){
 			@Override
 			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-				//outputLabel.setText("Press a Button");
-				System.out.println("screen up");
+				System.out.println("button up");
+				buttonPressed = false;
 			}
 			@Override
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-				//outputLabel.setText("Pressed Text Button");
-				System.out.println("screen down");
+				System.out.println("button down");
+				buttonPressed = true;
+				currentShape = "Square";
 				return true;
 			}
+		});
+
+
+		coneButton.addListener(new InputListener(){
+			@Override
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button up");
+				buttonPressed = false;
+			}
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("button down");
+				buttonPressed = true;
+				currentShape = "Triangle";
+				return true;
+			}
+		});
+
+		stage.addActor(circleButton);
+		stage.addActor(squareButton);
+		stage.addActor(coneButton);
+
+
+		stage.addListener(new InputListener(){
+
+			@Override
+			public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+				System.out.println("up");
+				CustomShape c = shapes.get(shapes.size()-1);
+				c.expanding = false;
+				//radius = 0;
+				//shapeRenderer = new ShapeRenderer();
+				//shapeRenderers.add(new ShapeRenderer());
+			}
+
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				if(buttonPressed == false) {
+					System.out.println("down");
+
+					CustomShape newShape;
+
+					if(currentShape == "Circle"){
+						newShape = new Circle(x, y, 0, true);
+					}
+					else if (currentShape == "Square") {
+						newShape = new Square(x, y, 0, 0, true);
+					}else{
+						newShape = new Cone(x, y, 0, 0, 0, true);
+					}
+
+					shapes.add(newShape);
+					return true;
+				}
+				return false;
+			}
+
 		});
 
 	}
@@ -111,15 +256,16 @@ public class Assign3 extends ApplicationAdapter {
 		shapeRenderer.end();
 		*/
 
-		//this doesn't quite work, I'll probably try a custom class
-		//each with X, Y, Len/Wid/Radius, shape, shapeRenderer
+
 		for(CustomShape s: shapes){
 			s.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 			s.shapeRenderer.setColor(1, 1, 0, 1);
-			s.shapeRenderer.circle(s.x, s.y, s.r, 500);
-			if(s.expanding == true){
-				s.r++;
-			}
+
+			s.draw();
+			s.expand();
+
+
+
 			s.shapeRenderer.end();
 		}
 
@@ -130,7 +276,6 @@ public class Assign3 extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-		batch.dispose();
-		img.dispose();
+
 	}
 }
