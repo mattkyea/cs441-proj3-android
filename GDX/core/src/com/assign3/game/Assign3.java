@@ -4,10 +4,17 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 
@@ -16,10 +23,15 @@ public class Assign3 extends ApplicationAdapter {
 	Texture img;
 	ShapeRenderer shapeRenderer;
 	ShapeRenderer s2;
+	private Stage stage;
 	ArrayList<CustomShape> shapes = new ArrayList<>();
 	float radius;
 	float xPos;
 	float yPos;
+	BitmapFont font;
+	TextButton button;
+	TextButton.TextButtonStyle textButtonStyle;
+	TextureAtlas buttonAtlas;
 	boolean expandShape = false;
 
 	public class CustomShape{
@@ -44,79 +56,42 @@ public class Assign3 extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 		//shapeRenderers.add(shapeRenderer);
 		//GestureDetector.GestureListener gestureListener = this;
-		Gdx.input.setInputProcessor(new GestureDetector(new GestureDetector.GestureListener()
-			{
-				@Override
-				public boolean touchDown(float x, float y, int pointer, int button) {
-					return false;
-				}
-
-				@Override
-				public boolean tap(float x, float y, int count, int button) {
-					return false;
-				}
-
-				@Override
-				public boolean longPress(float x, float y) {
-					return false;
-				}
-
-				@Override
-				public boolean fling(float velocityX, float velocityY, int button) {
-					return false;
-				}
-
-				@Override
-				public boolean pan(float x, float y, float deltaX, float deltaY) {
-					return false;
-				}
-
-				@Override
-				public boolean panStop(float x, float y, int pointer, int button) {
-					return false;
-				}
-
-				@Override
-				public boolean zoom(float initialDistance, float distance) {
-					return false;
-				}
-
-				@Override
-				public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-					return false;
-				}
-
-				@Override
-				public void pinchStop() {
-
-				}
-			}
-		)
-
-		{
+		stage = new Stage(new ScreenViewport());
+		Gdx.input.setInputProcessor(stage);
+		font = new BitmapFont();
+		//System.out.println(Gdx.files.internal(""));
+		Skin mySkin = new Skin(Gdx.files.internal("skin/flat-earth-ui.json"));
+		Button button2 = new TextButton("Text Button",mySkin);
+		button2.setSize(200,200);
+		button2.setPosition(500,500);
+		button2.addListener(new InputListener(){
 			@Override
-			public boolean touchDown(float x, float y, int pointer, int button) {
-				System.out.println("down");
-				shapes.add(new CustomShape(x, y, 0,0,0, true));
-				expandShape = true;
-				xPos = x;
-				yPos = y;
-				//shapeRenderer = new ShapeRenderer();
-				return false;
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				//outputLabel.setText("Press a Button");
+				System.out.println("button up");
 			}
-
 			@Override
-			public boolean touchUp(float x, float y, int pointer, int button) {
-				System.out.println("up");
-				CustomShape c = shapes.get(shapes.size()-1);
-				c.expanding = false;
-				//radius = 0;
-				//shapeRenderer = new ShapeRenderer();
-				//shapeRenderers.add(new ShapeRenderer());
-				return false;
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				//outputLabel.setText("Pressed Text Button");
+				System.out.println("button down");
+				return true;
 			}
-
 		});
+		stage.addActor(button2);
+		stage.addListener(new InputListener(){
+			@Override
+			public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+				//outputLabel.setText("Press a Button");
+				System.out.println("screen up");
+			}
+			@Override
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				//outputLabel.setText("Pressed Text Button");
+				System.out.println("screen down");
+				return true;
+			}
+		});
+
 	}
 
 	@Override
@@ -147,6 +122,9 @@ public class Assign3 extends ApplicationAdapter {
 			}
 			s.shapeRenderer.end();
 		}
+
+		stage.act();
+		stage.draw();
 
 	}
 	
